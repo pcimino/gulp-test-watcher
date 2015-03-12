@@ -13,7 +13,6 @@ module.exports = function(gulp, runSequence) {
     var pkg = require('../package.json');
     var SRC = 'src/';
     var TEST = 'test/';
-    var NOT_SRC = '!src/';
     var specExt = 'Spec';
 
     var config = {
@@ -25,10 +24,10 @@ module.exports = function(gulp, runSequence) {
             COVERAGE:'coverage',
             specExt:specExt,
             JS_TEST_SRC: [
-                'src/**/*.js',
+                SRC + '**/*.js',
             ],
             JS_TESTS: [ 
-                'test/jasmine/**/*' + specExt+ '.js'
+                TEST + 'jasmine/**/*' + specExt+ '.js'
             ],
             karmaTestFiles:[],
             karmaConfig:'test/karma.conf.js'

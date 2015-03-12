@@ -5,5 +5,5 @@
 var myScript2 = {};
 
 myScript2.getValue = function() {
-  return "myScript2";
+    return "myScript2";
 };

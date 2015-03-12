@@ -36,11 +36,8 @@ module.exports = function(gulp, runSequence, config) {
      *         .../src
      */
     var addChangedFileToTestList = function(changed) {
-        console.log('bbbbbbbbbbbbbbbbbbbbbb' + config.karmaTestFiles);
         if (changed.type === 'changed' && changed.path.indexOf('.js') > 0) {
             var fileTest = changed.path;
-
-            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAChanged files " + fileTest);
 
             // only want to test changed files
             // so find the JavaScript name and change it to Name*.js: IF the NameController.js changed, then the NAMEControllerSpec.js will run
