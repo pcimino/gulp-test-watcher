@@ -12,7 +12,7 @@ module.exports = function(gulp, runSequence) {
     var del = require('del');
     var pkg = require('../package.json');
     var SRC = 'src/';
-    var TEST = 'test/';
+    var JASMINE = 'test/jasmine/'; // if tests and code live side by side, change this to JASMINE = SRC;
     var specExt = 'Spec';
 
     var config = {
@@ -26,11 +26,12 @@ module.exports = function(gulp, runSequence) {
             JS_TEST_SRC: [
                 SRC + '**/*.js',
             ],
-            JS_TESTS: [ 
-                TEST + 'jasmine/**/*' + specExt+ '.js'
+            JS_TESTS: [
+                JASMINE + '/**/*' + specExt + '.js'
             ],
             karmaTestFiles:[],
-            karmaConfig:'test/karma.conf.js'
+            karmaConfig:'test/karma.conf.js',
+            JASMINE:JASMINE
     };
 
     // load script files
