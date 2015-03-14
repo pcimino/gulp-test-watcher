@@ -16,11 +16,15 @@ module.exports = function(gulp, runSequence, config) {
        var fileList = [];
        fileList = fileList.concat(config.JS_TEST_SRC);
        fileList = fileList.concat(config.JS_TESTS);
-       gulp.watch(fileList, function(changed, callBack) {
-           addChangedFileToTestList(changed);
-           console.log(JSON.stringify(changed, null, 2));
-           runSequence('test', callBackHandler);
-       });
+       // give all file resources a chance to close
+       // some IDEs take a fraction of a second when saving all files
+       setTimeout(function() {
+           gulp.watch(fileList, function(changed, callBack) {
+               addChangedFileToTestList(changed);
+               console.log(JSON.stringify(changed, null, 2));
+               runSequence('test', callBackHandler);
+           });
+        }, 500);
    });
    
     /**
@@ -42,15 +46,22 @@ module.exports = function(gulp, runSequence, config) {
             // only want to test changed files
             // so find the JavaScript name and change it to Name*.js: IF the NameController.js changed, then the NAMEControllerSpec.js will run
             fileTest = fileTest.substring(0, fileTest.lastIndexOf('.js'));
+
             if (fileTest.lastIndexOf(config.specExt) > 0) {
                 fileTest = fileTest.substring(0, fileTest.lastIndexOf(config.specExt));
             }
-            
             // check for duplicates
             // this is really overkill because if karma sees two files ['MySpec_1.js', 'MySpec_1.js'] it'll only run the test once
             // in theory if a dev is running the watch continuously over a long time with the same changes the array will
             // blow up memory, but unlikely
-            var filePattern = fileTest.replace('\\src\\', '\\test\\jasmine\\').replace('/src/', '/test/jasmine/') + config.specExt + '.js';
+            var srcPattern = config.SRC;
+            var jasminePattern = config.JASMINE;
+            if (fileTest.indexOf('\\') > 0) {
+                // replace windows path delimiters
+                srcPattern = config.SRC.replace(/\//g, '\\');
+                jasminePattern = config.JASMINE.replace(/\//g, '\\');
+            }
+            var filePattern = fileTest.replace(srcPattern, jasminePattern) + config.specExt + '.js';
             // make sure the Spec file exists (i.e. myAppSpec.js doesn't exist
             if (fs.existsSync(filePattern)) {
                 var addFlag = true;
