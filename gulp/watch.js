@@ -6,27 +6,25 @@ module.exports = function(gulp, runSequence, config) {
 
     var fs = require('fs');
 
-    // dummy callBack prevents emit error on too many callBacks
-    var callBackHandler = function() {
-    };
-
-   gulp.task('watch-test', function(callBack) {
-       
-    // watch for test changes
-       var fileList = [];
-       fileList = fileList.concat(config.JS_TEST_SRC);
-       fileList = fileList.concat(config.JS_TESTS);
-       // give all file resources a chance to close
-       // some IDEs take a fraction of a second when saving all files
-       setTimeout(function() {
-           gulp.watch(fileList, function(changed, callBack) {
-               addChangedFileToTestList(changed);
-               console.log(JSON.stringify(changed, null, 2));
-               runSequence('test', callBackHandler);
-           });
+    gulp.task('watch-test', function() {
+        // watch for test changes
+        var fileList = [];
+        fileList = fileList.concat(config.JS_TEST_SRC);
+        fileList = fileList.concat(config.JS_TESTS);
+        // give all file resources a chance to close
+        // some IDEs take a fraction of a second when saving all files
+        setTimeout(function() {
+            gulp.watch(fileList, function(changed) {
+                console.log(JSON.stringify(changed, null, 2));
+                if (!addChangedFileToTestList(changed)) {
+                    config.karmaTestFiles = [];
+                    config.karmaTestFiles = config.karmaTestFiles.concat(config.JS_TEST_SRC);
+                    config.karmaTestFiles = config.karmaTestFiles.concat(config.JS_TESTS);
+                }
+                runSequence('test', function() {config.karmaTestFiles = [];});
+            });
         }, 500);
-   });
-   
+    });
     /**
      * Helper method makes sure only tests run for changed files or matching Specs
      * 
@@ -73,9 +71,11 @@ module.exports = function(gulp, runSequence, config) {
                 }
                 if (addFlag) {                
                     config.karmaTestFiles.push(filePattern);
+                    return true;
                 }
             } else {
                 console.log('Test file DOES NOT EXIST ' + filePattern);
+                return false;
             }
         }
     };

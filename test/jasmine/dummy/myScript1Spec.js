@@ -4,7 +4,6 @@
 describe('Testing myScript1', function() {
 
     beforeEach(function() {
-
     });
     
     it('Should return a value', function() {
